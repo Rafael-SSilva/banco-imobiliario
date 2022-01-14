@@ -1,9 +1,17 @@
 import React from 'react'
 import Container from './styles'
 
-function DefaultInput({placeholder, onChange}) {
+function DefaultInput({placeholder, onChange, type='text', value='', disabled=false, ...rest}) {
+
     return (
-        <Container value={placeholder} onChange={onChange}/>
+        <Container 
+            placeholder={placeholder} 
+            onChange={onChange} 
+            type={type} 
+            value={value} 
+            disabled={disabled}
+            {...rest}
+            />
     )
 }
 

@@ -1,17 +1,11 @@
 import React from 'react'
-import Container, { WhiteButton } from './styles'
+import Container from './styles'
 
-function DefaultButton({title, clickFnc, btnStyle = 'Purple'}) {
-
-    if(btnStyle.toUpperCase() === 'WHITE'){
-        return (
-            <WhiteButton onClick={clickFnc}>
-                {title}
-            </WhiteButton>
-        )
-    }
+function DefaultButton({title, clickFnc, btnStyle = 'PURPLE'}) {
     return (
-        <Container onClick={clickFnc}>
+        <Container 
+            white={btnStyle.toUpperCase() === 'WHITE'} 
+            onClick={clickFnc}>
             {title}
         </Container>
     )
