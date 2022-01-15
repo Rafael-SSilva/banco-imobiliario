@@ -2,7 +2,12 @@ import React from 'react'
 import DefaultButton from '../../components/Button'
 import Container, {TitleContainer} from './styles'
 
+import { useNavigate } from 'react-router-dom';
+
 function MainPage({children}) {
+
+    const navigate = useNavigate();
+
     return (
         <Container>
             <TitleContainer>
@@ -10,8 +15,8 @@ function MainPage({children}) {
                 <p>Banco imobiliario manager</p>
             </TitleContainer>
             <div>
-                <DefaultButton title="Criar sala" clickFnc={ () => { alert('Criar sala')}}/>
-                <DefaultButton title="Participar" clickFnc={ () => { alert('Participar')}}/>
+                <DefaultButton title="Criar sala" clickFnc={ () => navigate('/new')}/>
+                <DefaultButton title="Participar" clickFnc={ () => navigate('/join')}/>
             </div>
         </Container>
     )

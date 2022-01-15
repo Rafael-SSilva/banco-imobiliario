@@ -1,15 +1,16 @@
 import './App.css';
-import DefaultButton from './components/Button';
-import CreateRoom from './pages/createRoom';
-import MainPage from './pages/main/index';
-import Participate from './pages/participate';
-import PlayersScreen from './pages/players';
-import TransferingScreen from './pages/transfer';
+import React from 'react'
+
+import Routes from './routes';
+
+import { BrowserRouter as Router} from 'react-router-dom';
 
 function App() {
   return (
     <div className='app'>
-      <MainPage />
+      <Router>
+        <Routes />
+      </Router>
     </div>
   );
 }
