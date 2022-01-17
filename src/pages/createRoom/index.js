@@ -62,7 +62,7 @@ function CreateRoom() {
 
     return (
         <Container>
-            <Logo />
+            <Logo setClick={ () => navigate('/')}/>
             {loading && <Spinner /> }
             <div className='wrapper'>
                 <DefaultInput placeholder={'Seu nome'} onChange={handleName} value={name}/>

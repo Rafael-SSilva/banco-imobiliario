@@ -54,7 +54,7 @@ function Participate() {
 
     return (
         <Container>
-            <Logo />
+            <Logo setClick={ () => navigate('/')}/>
             {loading && <Spinner /> }
             <div className='wrapper'>
                 <DefaultInput placeholder={'ID da sala'} onChange={handleRoomId} value={roomId}/>
