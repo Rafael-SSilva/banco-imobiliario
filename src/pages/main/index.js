@@ -4,7 +4,7 @@ import Container, {TitleContainer} from './styles'
 
 import { useNavigate } from 'react-router-dom';
 
-function MainPage({children}) {
+function MainPage() {
 
     const navigate = useNavigate();
 

@@ -6,6 +6,7 @@ import Container from './styles'
 import { useLocation, useNavigate} from 'react-router-dom';
 import { child, get, onValue, push, ref, set, update } from 'firebase/database';
 import database from '../../firebase-config';
+import Spinner from '../../components/spinner';
 
 function TransferingScreen() {
 
@@ -19,6 +20,7 @@ function TransferingScreen() {
     const [myData, setMyData] = useState({});
     const [transferEnable, setTransferEnable] = useState(true);
     const [history,setHistory] = useState([])
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if(state.userTo && playerId && roomId){
@@ -28,6 +30,7 @@ function TransferingScreen() {
                     if(snap.exists()){
                         const receivedData = snap.val();
                         setMyData(receivedData)
+                        setLoading(false);
                         if(receivedData && receivedData.history){
                             let hist = []
                             Object.keys(receivedData.history).forEach((key) => {
@@ -61,6 +64,7 @@ function TransferingScreen() {
     function handleTransfer(){
         if(playerId && roomId && userTo && transfer){
             setTransferEnable(false);
+            setLoading(true);
             get(child(dbRef,`salas/${roomId}/players/${playerId}`)).then(userFromSnap => {
                 get(child(dbRef,`salas/${roomId}/players/${userTo.id}`)).then( userToSnap => {
                     const updates = {}
@@ -78,9 +82,16 @@ function TransferingScreen() {
                             set(newHistoryTo, {received: true, value: transfer, text: `Recebeu R$${transfer}`}).then(() => {
                                 set(newHistoryFrom, {received: false, value: transfer, text: `Pagou R$${transfer}`}).then(() => {
                                     setTransferEnable(true);
+                                    setLoading(false);
+                                }).catch( () => {
+                                    setLoading(false);
+                                    setTransferEnable(true);
                                 })
+                            }).catch( () => {
+                                setLoading(false);
+                                setTransferEnable(true);
                             })
-                            setTransferEnable(true);
+                            
                         })
                     }
                 }).catch( error => console.log(error))
@@ -90,6 +101,7 @@ function TransferingScreen() {
 
     return (
         <Container>
+            {loading && <Spinner /> }
             {
                 userTo && myData &&
                 <div className='inputs'>
