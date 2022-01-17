@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import DefaultButton from '../../components/Button'
 import Container from './styles'
 import database from '../../firebase-config';
@@ -15,6 +15,7 @@ function PlayersScreen() {
     const playerId = localStorage.getItem('userKey');
     const navigate = useNavigate();
     const [openModal, setOpenModal] = useState(false);
+    const idRef = createRef();
     
     useEffect(() => {
         const roomRef = roomId ? ref(database, `salas/${roomId}`): null;
@@ -65,12 +66,24 @@ function PlayersScreen() {
         })
     }
 
+    function haldeCopyId(){
+        const el = idRef;
+        navigator.clipboard.writeText(el.current.innerText).then( () => {
+            console.log('Copiado')
+        })
+    }
+
     return (
         <Container>
             <div className='btn-close' onClick={() => setOpenModal(true)}><CloseBtn /></div>
+            <div className='room-id'>
+                <p>ID:<span ref={idRef}>{roomData && roomData.id}</span></p>
+                <button type='button' onClick={haldeCopyId}>Copiar</button>
+            </div>
             <div className='room'>
-                <p>ID: #{roomData && roomData.id}</p>
-                <p>R$: {myData && myData.balance ? myData.balance : 0}</p>
+
+                <p>Jogador: <span>{myData ? myData.name : ''}</span></p>
+                <p>R$:<span style={{color: 'green'}}>{myData && myData.balance ? myData.balance : 0}</span></p>
             </div>
             <div className='players'>
                 <DefaultButton title={'Pagar banco'} />
