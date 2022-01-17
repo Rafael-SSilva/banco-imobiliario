@@ -6,6 +6,10 @@ const Container = styled.div`
     background: var(--main-purple);
     border-radius: 50%;
 
+    &:hover{
+        cursor: pointer;
+    }
+
     &::before, &::after{
         content: '';
         display: block;

@@ -5,6 +5,7 @@ import database from '../../firebase-config';
 import {ref, onValue} from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/modal';
+import CloseBtn from './exitButton';
 
 function PlayersScreen() {
     const [roomData, setRoomData] = useState({});
@@ -51,6 +52,7 @@ function PlayersScreen() {
 
     return (
         <Container>
+            <div className='btn-close' onClick={() => setOpenModal(true)}><CloseBtn /></div>
             <div className='room'>
                 <p>ID: #{roomData && roomData.id}</p>
                 <p>R$: {myData && myData.balance ? myData.balance : 0}</p>

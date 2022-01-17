@@ -18,6 +18,9 @@ const Container = styled.div`
         font-weight: 600;
     }
 
+    .btn-close {
+        align-self: flex-end;
+    }
 
 `
 
