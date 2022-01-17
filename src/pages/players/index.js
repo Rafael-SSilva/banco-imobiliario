@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DefaultButton from '../../components/Button'
 import Container from './styles'
 import database from '../../firebase-config';
-import {ref, onValue} from 'firebase/database';
+import {ref, onValue, remove, child, get} from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/modal';
 import CloseBtn from './exitButton';
@@ -50,6 +50,21 @@ function PlayersScreen() {
         setOpenModal(false)
     }
 
+    function handleExitRoom(){
+        const dbRef = ref(database)
+        get(child(dbRef,`salas/${roomId}/players/${myData.id}`)).then(() => {
+            remove(child(dbRef,`salas/${roomId}/players/${myData.id}`)).then( () => {
+                localStorage.removeItem('userKey')
+                localStorage.removeItem('roomId')
+                navigate('/')
+            })
+        }).catch( () => {
+            localStorage.removeItem('userKey')
+            localStorage.removeItem('roomId')
+            navigate('/')
+        })
+    }
+
     return (
         <Container>
             <div className='btn-close' onClick={() => setOpenModal(true)}><CloseBtn /></div>
@@ -59,7 +74,11 @@ function PlayersScreen() {
             </div>
             <div className='players'>
                 <DefaultButton title={'Pagar banco'} />
-                {openModal && <Modal text={'Deseja sair?'} confirmText='Sim' cancelText='Não' cancelFnc={closeModal}/>}
+                {openModal &&
+                     <Modal text={'Deseja sair?'} 
+                            confirmText='Sim' confirmFnc={handleExitRoom}
+                            cancelText='Não' cancelFnc={closeModal}/>
+                }
                 {users && users.length > 0 &&
                     users.map( user => 
                         <DefaultButton 
