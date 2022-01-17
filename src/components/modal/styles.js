@@ -43,6 +43,10 @@ const Container = styled.div`
                 border: 1px solid;
                 border-radius: 8px;
                 
+                &:hover{
+                    cursor: pointer;
+                }
+
                 :first-child {
                     background: var(--main-purple);
                     border-color: #ffffff;
