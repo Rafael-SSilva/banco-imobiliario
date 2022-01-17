@@ -6,7 +6,7 @@ function History({transactions}) {
         <Container>
             {
             transactions && transactions.map(trans => {
-                return <p>{trans.text}</p>
+                return <p key={trans.key}>{trans.text}</p>
             })
             }
         </Container>

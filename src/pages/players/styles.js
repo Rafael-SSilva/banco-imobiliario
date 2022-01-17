@@ -6,8 +6,12 @@ const Container = styled.div`
     flex-direction: column;
     justify-content: space-evenly;
     
-    .room {
+    .players {
         margin: 0 auto;
+
+        & button:first-child{
+            margin-bottom: 20px;
+        }
     }
 
     & p {

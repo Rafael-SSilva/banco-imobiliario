@@ -1,21 +1,61 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import DefaultButton from '../../components/Button';
 import DefaultInput from '../../components/Input';
 import Logo from '../../components/Logo';
 import Container from './styles'
+import database from '../../firebase-config';
+import {ref, set, get, child, push} from 'firebase/database';
 
 function Participate() {
 
     const navigate = useNavigate();
+    const [roomId, setRoomId] = useState();
+    const [userName, setUserName] = useState();
+
+    function handleRoomId(e){
+        setRoomId(e.target.value)
+    }
+
+    function handleUserName(e){
+        setUserName(e.target.value);
+    }
+
+    function handleJoinRoom(){
+        if(roomId && userName){
+            const dbRef = ref(database)
+            
+            if(dbRef){
+                get(child(dbRef,`salas/${roomId}`)).then( (snapshot) =>{
+                    
+                    if(snapshot.exists()) {
+                        const roomRef = ref(database, `salas/${roomId}`)
+                        const newUser = push(child(roomRef,`/players`));
+                        const balance = snapshot.val().balance;
+    
+                        localStorage.setItem('roomId', roomId)
+            
+                        set(newUser, {name:userName, balance, id: newUser.key}).then(() => {
+                            localStorage.setItem('userKey', newUser.key)
+                            navigate('/players')
+                        }).catch((error) => {
+                            console.log(error)
+                        })
+                    }
+                })
+
+            }
+
+        }
+    }
 
     return (
         <Container>
             <Logo />
             <div className='wrapper'>
-                <DefaultInput placeholder={'ID da sala'} onChange={() => {alert('Ok')}} />
-                <DefaultInput placeholder={'Seu nome'} onChange={() => {alert('Ok')}}/> 
-                <DefaultButton title={'Entrar'} clickFnc={() => navigate('/players')} />
+                <DefaultInput placeholder={'ID da sala'} onChange={handleRoomId} value={roomId}/>
+                <DefaultInput placeholder={'Seu nome'} onChange={handleUserName} value={userName}/> 
+                <DefaultButton title={'Entrar'} clickFnc={handleJoinRoom} />
             </div>
         </Container>
     )
