@@ -18,7 +18,6 @@ function TransferingScreen() {
     const playerId = localStorage.getItem('userKey');
     const roomId = localStorage.getItem('roomId');
     const [myData, setMyData] = useState({});
-    const [transferEnable, setTransferEnable] = useState(true);
     const [history,setHistory] = useState([])
     const [loading, setLoading] = useState(true);
 
@@ -63,7 +62,6 @@ function TransferingScreen() {
 
     function handleTransfer(){
         if(playerId && roomId && userTo && transfer){
-            setTransferEnable(false);
             setLoading(true);
             get(child(dbRef,`salas/${roomId}/players/${playerId}`)).then(userFromSnap => {
                 get(child(dbRef,`salas/${roomId}/players/${userTo.id}`)).then( userToSnap => {
@@ -81,15 +79,12 @@ function TransferingScreen() {
 
                             set(newHistoryTo, {received: true, value: transfer, text: `Recebeu R$${transfer}`}).then(() => {
                                 set(newHistoryFrom, {received: false, value: transfer, text: `Pagou R$${transfer}`}).then(() => {
-                                    setTransferEnable(true);
                                     setLoading(false);
                                 }).catch( () => {
                                     setLoading(false);
-                                    setTransferEnable(true);
                                 })
                             }).catch( () => {
                                 setLoading(false);
-                                setTransferEnable(true);
                             })
                             
                         })
@@ -101,7 +96,6 @@ function TransferingScreen() {
 
     return (
         <Container>
-            {loading && <Spinner /> }
             {
                 userTo && myData &&
                 <div className='inputs'>
@@ -114,7 +108,10 @@ function TransferingScreen() {
                         value={transfer}
                         min={0} max={2}
                         />
-                    <DefaultButton title={transferEnable ? 'Transferir' : 'Transferindo...'} clickFnc={handleTransfer} disabled={!transferEnable}/>
+                    {loading ? 
+                        <Spinner /> : 
+                        <DefaultButton title={'Transferir'} clickFnc={handleTransfer}/>
+                    }
                 </div>
             }
             {
