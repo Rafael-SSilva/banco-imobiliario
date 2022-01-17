@@ -21,17 +21,17 @@ function PlayersScreen() {
                 const playersList = [];
 
                 if(newData && newData.players){
+                    setRoomData(newData)
                     Object.keys(newData.players).forEach((key) => {
-                        console.log(newData.players[key])
-                        if(newData.players[key].id !== playerId){
+                        if(newData.players[key].id.trim() !== playerId.trim()){
                             
                             playersList.push(newData.players[key]);
                         }
+                        else {
+                            setMyData(newData.players[key])
+                        }
                     });
                     if(playersList){
-                        const dataFiltered = playersList.filter( x => x.id === playerId)
-                        setMyData(dataFiltered[0])
-                        setRoomData(newData)
                         setUsers(playersList)
                     }
                 }

@@ -4,6 +4,7 @@ import DefaultInput from '../../components/Input';
 import Logo from '../../components/Logo';
 import Container from './styles'
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../../components/spinner';
 
 import database from '../../firebase-config';
 import {child, push, ref, set} from 'firebase/database';
@@ -16,6 +17,7 @@ function CreateRoom() {
     const navigate = useNavigate();
     const roomId = uuidv4();
     const roomRef = ref(database, `salas/${roomId}`)
+    const [loading, setLoading] = useState(false);
 
     function handleName(e){
         setName(e.target.value);
@@ -29,6 +31,7 @@ function CreateRoom() {
 
     function handleCreate(){
         if(name && balance){
+            setLoading(true);
             const newRoom = {
                 balance : balance,
                 id: roomId,
@@ -36,9 +39,10 @@ function CreateRoom() {
             set(roomRef, newRoom).then( () => {
                 localStorage.setItem('roomId', roomId);
                 const newUser = push(child(roomRef,`/players`));
-    
-                set(newUser, {name, balance, key: newUser.key}).then(() => {
+                
+                set(newUser, {name, balance, id: newUser.key}).then(() => {
                     localStorage.setItem('userKey', newUser.key)
+                    setLoading(false);
                     navigate('/players')
                 }).catch((error) => {
                     console.log(error)
@@ -50,6 +54,7 @@ function CreateRoom() {
     return (
         <Container>
             <Logo />
+            {loading && <Spinner /> }
             <div className='wrapper'>
                 <DefaultInput placeholder={'Seu nome'} onChange={handleName} value={name}/>
                 <DefaultInput placeholder={'Valor inicial'} onChange={handleBalance} value={balance} type='number'/> 
