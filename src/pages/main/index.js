@@ -3,6 +3,7 @@ import DefaultButton from '../../components/Button'
 import Container, {TitleContainer} from './styles'
 
 import { useNavigate } from 'react-router-dom';
+import Logo from '../../components/Logo';
 
 function MainPage() {
 
@@ -19,6 +20,7 @@ function MainPage() {
 
     return (
         <Container>
+            <Logo setClick={ () => navigate('/')}/>
             <TitleContainer>
                 <h1>Bem Vindo</h1>
                 <p>Banco imobiliario manager</p>
