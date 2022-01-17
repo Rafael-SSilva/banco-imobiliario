@@ -25,7 +25,7 @@ function CreateRoom() {
 
     function handleBalance(e){
         if (maxNumValue(e.target.value)){
-            setBalance(e.target.value);
+            setBalance(parseInt(e.target.value));
         }
     }
 
@@ -40,7 +40,7 @@ function CreateRoom() {
                 localStorage.setItem('roomId', roomId);
                 const newUser = push(child(roomRef,`/players`));
                 
-                set(newUser, {name, balance: parseInt(balance), id: newUser.key}).then(() => {
+                set(newUser, {name, balance, id: newUser.key}).then(() => {
                     localStorage.setItem('userKey', newUser.key)
                     setLoading(false);
                     navigate('/players')
