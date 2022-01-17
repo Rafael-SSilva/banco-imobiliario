@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DefaultButton from '../../components/Button';
 import DefaultInput from '../../components/Input';
 import Logo from '../../components/Logo';
@@ -18,6 +18,15 @@ function CreateRoom() {
     const roomId = uuidv4();
     const roomRef = ref(database, `salas/${roomId}`)
     const [loading, setLoading] = useState(false);
+
+    useEffect( () => {
+        const userKey = localStorage.getItem('userKey');
+        const roomId = localStorage.getItem('roomId');
+
+        if(userKey && roomId){
+            navigate('/players')
+        }
+    }, [navigate])
 
     function handleName(e){
         setName(e.target.value);

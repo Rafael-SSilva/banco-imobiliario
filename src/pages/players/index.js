@@ -4,6 +4,7 @@ import Container from './styles'
 import database from '../../firebase-config';
 import {ref, onValue} from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
+import Modal from '../../components/modal';
 
 function PlayersScreen() {
     const [roomData, setRoomData] = useState({});
@@ -12,6 +13,7 @@ function PlayersScreen() {
     const roomId = localStorage.getItem('roomId');
     const playerId = localStorage.getItem('userKey');
     const navigate = useNavigate();
+    const [openModal, setOpenModal] = useState(false);
     
     useEffect(() => {
         const roomRef = roomId ? ref(database, `salas/${roomId}`): null;
@@ -43,6 +45,10 @@ function PlayersScreen() {
         navigate('/transactions', {state: {userTo: {id:e.target.id, name:e.target.name}}})
     }
 
+    function closeModal(){
+        setOpenModal(false)
+    }
+
     return (
         <Container>
             <div className='room'>
@@ -51,6 +57,7 @@ function PlayersScreen() {
             </div>
             <div className='players'>
                 <DefaultButton title={'Pagar banco'} />
+                {openModal && <Modal text={'Deseja sair?'} confirmText='Sim' cancelText='Não' cancelFnc={closeModal}/>}
                 {users && users.length > 0 &&
                     users.map( user => 
                         <DefaultButton 
