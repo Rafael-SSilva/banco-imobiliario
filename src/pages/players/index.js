@@ -86,7 +86,7 @@ function PlayersScreen() {
                 <p>R$:<span style={{color: 'green'}}>{myData && myData.balance ? myData.balance : 0}</span></p>
             </div>
             <div className='players'>
-                <DefaultButton title={'Pagar banco'} />
+                <DefaultButton title={'Banco'} clickFnc={() => navigate('/bank')} />
                 {openModal &&
                      <Modal text={'Deseja sair?'} 
                             confirmText='Sim' confirmFnc={handleExitRoom}

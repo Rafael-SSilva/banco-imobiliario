@@ -3,6 +3,7 @@ import {
 Routes,
 Route
 } from 'react-router-dom';
+import BankScreen from './pages/bank';
 import CreateRoom from './pages/createRoom';
 import MainPage from './pages/main';
 import Participate from './pages/participate';
@@ -17,6 +18,7 @@ export default function MainRoutes() {
             <Route path="/join" element={<Participate />}/>
             <Route path="/players" element={<PlayersScreen />}/>
             <Route path="/transactions" element={<TransferingScreen />}/>
+            <Route path="/bank" element={<BankScreen />}/>
         </Routes>
     )
 }
