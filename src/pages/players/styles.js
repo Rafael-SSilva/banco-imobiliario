@@ -14,8 +14,9 @@ const Container = styled.div`
             border-radius: 8px;
             color: white;
             font-weight: 600px;
+            cursor: pointer;
         }
-        p {
+        div {
             font-weight: 600;
             margin: .4rem 0;
             border: 1px solid var(--main-purple);
