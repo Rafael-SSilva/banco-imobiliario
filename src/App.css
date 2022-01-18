@@ -17,14 +17,11 @@
 
  .app {
    max-width: 800px;
-   margin: 4rem auto;
-   /* border: 1px solid #ccc; */
+   margin: 0 auto;
    border-radius: 8px;
    display: flex;
    flex-flow: column wrap;
    align-items: center;
-   padding: 20px 0;
    height: 600px;
    justify-content: space-between;
  }
-

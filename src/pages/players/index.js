@@ -68,14 +68,6 @@ function PlayersScreen() {
         })
     }
 
-    async function haldeCopyId(){
-        const el = idRef;
-        console.debug('elemento',el.current.select())
-        navigator.clipboard.writeText(el.current.innerText).then( () => {
-            console.log('Copiado')
-        }, (e) => alert('Erro', e))
-    }
-
     return (
         <Container>
             <div className='btn-close' onClick={() => setOpenModal(true)}><CloseBtn /></div>
