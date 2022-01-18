@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/modal';
 import CloseBtn from './exitButton';
 
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+
 function PlayersScreen() {
     const [roomData, setRoomData] = useState({});
     const [users, setUsers] = useState([]);
@@ -66,22 +68,24 @@ function PlayersScreen() {
         })
     }
 
-    function haldeCopyId(){
+    async function haldeCopyId(){
         const el = idRef;
+        console.debug('elemento',el.current.select())
         navigator.clipboard.writeText(el.current.innerText).then( () => {
             console.log('Copiado')
-        })
+        }, (e) => alert('Erro', e))
     }
 
     return (
         <Container>
             <div className='btn-close' onClick={() => setOpenModal(true)}><CloseBtn /></div>
             <div className='room-id'>
-                <p>ID:<span ref={idRef}>{roomData && roomData.id}</span></p>
-                <button type='button' onClick={haldeCopyId}>Copiar</button>
+                <div>ID:<span ref={idRef}>{roomData && roomData.id}</span></div>
+                <CopyToClipboard text={roomId}>
+                    <button>Copiar</button>
+                </CopyToClipboard>
             </div>
             <div className='room'>
-
                 <p>Jogador: <span>{myData ? myData.name : ''}</span></p>
                 <p>R$:<span style={{color: 'green'}}>{myData && myData.balance ? myData.balance : 0}</span></p>
             </div>
