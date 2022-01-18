@@ -2,10 +2,11 @@ import styled from "styled-components";
 
 const Container = styled.div`
     border: 1px solid var(--main-purple);
-    height: 200px;
+    height: 300px;
     width: 300px;
     border-radius: 8px;
     overflow-y: auto;
+    padding: .6rem 0;
 
     & p {
         display: block;

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import DefaultButton from '../../components/Button';
 import DefaultInput from '../../components/Input';
-import History from './history';
+import History from '../../components/history';
 import Container from './styles'
 import { useLocation, useNavigate} from 'react-router-dom';
 import { child, get, onValue, push, ref, set, update } from 'firebase/database';
