@@ -31,7 +31,7 @@ function BankScreen() {
                     if(snap.exists()){
                         const receivedData = snap.val();
                         setMyData(receivedData)
-                        // setLoading(false);
+                        setLoading(false);
                         if(receivedData && receivedData.history){
                             let hist = []
                             Object.keys(receivedData.history).forEach((key) => {
