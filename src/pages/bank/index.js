@@ -109,7 +109,7 @@ function BankScreen() {
                 })
                 
             })
-        }).catch( error => setLoading(false))
+        }).catch( () => setLoading(false))
     }
 
     function handleCreditIR(){
