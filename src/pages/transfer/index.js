@@ -71,10 +71,11 @@ function TransferingScreen() {
                     const updates = {}
                     const fromObj = userFromSnap.val()
                     const toObj = userToSnap.val()
-                    if(fromObj.balance >= parseInt(transfer)){
+                    const newTransf = transfer < 0 ? 0 : transfer;
+                    if(fromObj.balance >= newTransf && newTransf > 0){
 
-                        updates[`/players/${fromObj.id}`] = {...fromObj, balance: fromObj.balance - parseInt(transfer)}
-                        updates[`/players/${toObj.id}`] = {...toObj, balance: toObj.balance + parseInt(transfer)}
+                        updates[`/players/${fromObj.id}`] = {...fromObj, balance: fromObj.balance - newTransf}
+                        updates[`/players/${toObj.id}`] = {...toObj, balance: toObj.balance + newTransf}
                         update(ref(database, `salas/${roomId}`), updates).then( () => {
                             
                             const newHistoryFrom = push(child(dbRef,`salas/${roomId}/players/${fromObj.id}/history`));
