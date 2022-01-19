@@ -82,6 +82,9 @@ function BankScreen() {
                         })
                         
                     })
+                    
+                } else {
+                    setLoading(false);
                 }
             }).catch( error => console.log(error))
         }
