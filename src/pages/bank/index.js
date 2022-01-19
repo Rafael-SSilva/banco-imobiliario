@@ -67,9 +67,10 @@ function BankScreen() {
             get(child(dbRef,`salas/${roomId}/players/${myData.id}`)).then(userFromSnap => {
                 const updates = {}
                 const fromObj = userFromSnap.val()
-                if(fromObj.balance >= parseInt(transfer)){
+                const newTransf = transfer < 0 ? 0 : transfer;
+                if(fromObj.balance >= newTransf && newTransf > 0){
 
-                    updates[`/players/${fromObj.id}`] = {...fromObj, balance: fromObj.balance - parseInt(transfer)}
+                    updates[`/players/${fromObj.id}`] = {...fromObj, balance: fromObj.balance - newTransf}
                     update(ref(database, `salas/${roomId}`), updates).then( () => {
                         
                         const newHistoryFrom = push(child(dbRef,`salas/${roomId}/players/${fromObj.id}/history`));
