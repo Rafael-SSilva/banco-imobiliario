@@ -80,8 +80,8 @@ function TransferingScreen() {
                             const newHistoryFrom = push(child(dbRef,`salas/${roomId}/players/${fromObj.id}/history`));
                             const newHistoryTo = push(child(dbRef,`salas/${roomId}/players/${toObj.id}/history`))
 
-                            set(newHistoryTo, {received: true, value: transfer, text: `Recebeu R$${transfer}`}).then(() => {
-                                set(newHistoryFrom, {received: false, value: transfer, text: `Pagou R$${transfer}`}).then(() => {
+                            set(newHistoryTo, {received: true, value: transfer, text: `R$${transfer} de ${fromObj.name}`}).then(() => {
+                                set(newHistoryFrom, {received: false, value: transfer, text: `R$${transfer} para ${toObj.name}`}).then(() => {
                                     setLoading(false);
                                 }).catch( () => {
                                     setLoading(false);
@@ -103,7 +103,6 @@ function TransferingScreen() {
                 userTo && myData &&
                 <div className='inputs'>
                     <div className='balance'><FontAwesomeIcon icon={faDollarSign}/><span style={{color: 'green', fontWeight:600}}>{myData.balance}</span></div>
-                    {/* <p style={{fontWeight:'600'}}>Meu saldo: <span style={{color: 'green'}}>R${myData.balance}</span></p> */}
                     <DefaultInput placeholder={`Para: ${userTo.name}`} disabled={true}/>
                     <DefaultInput 
                         placeholder='Valor' 
