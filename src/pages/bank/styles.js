@@ -3,8 +3,8 @@ import styled from "styled-components";
 const Container = styled.div`
     display: flex;
     width: 100%;
-    height: 95vh;
-    margin-top: 5vh;
+    height: 98vh;
+    margin-top: 2vh;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
@@ -44,7 +44,7 @@ const Container = styled.div`
     }
 
     & .history {
-        margin-top: 4rem;
+        padding: .8rem 0 1rem;
     }
 `
 
