@@ -7,6 +7,9 @@ import { useLocation, useNavigate} from 'react-router-dom';
 import { child, get, onValue, push, ref, set, update } from 'firebase/database';
 import database from '../../firebase-config';
 import Spinner from '../../components/spinner';
+import Header from '../../components/Header';
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function BankScreen() {
 
@@ -121,7 +124,7 @@ function BankScreen() {
         <Container>
             {myData &&
                 <div className='inputs'>
-                    <p style={{fontWeight:'600'}}>Meu saldo: <span style={{color: 'green'}}>R${myData.balance}</span></p>
+                    <div className='balance'><FontAwesomeIcon icon={faDollarSign}/><span style={{color: 'green', fontWeight:600}}>{myData.balance}</span></div>
                     <DefaultInput placeholder='Banco Imobiliário' disabled={true}/>
                     <DefaultInput 
                         placeholder='Valor' 
@@ -144,6 +147,7 @@ function BankScreen() {
             <div className='history'>
                 <History transactions={history}/>
             </div>
+            <Header handleListPlayers={()=> navigate('/players')}/>
         </Container>
     )
 }
