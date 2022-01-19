@@ -31,7 +31,7 @@ function BankScreen() {
                     if(snap.exists()){
                         const receivedData = snap.val();
                         setMyData(receivedData)
-                        setLoading(false);
+                        // setLoading(false);
                         if(receivedData && receivedData.history){
                             let hist = []
                             Object.keys(receivedData.history).forEach((key) => {
@@ -138,14 +138,16 @@ function BankScreen() {
                         min={0} max={2}
                         />
                     {loading ? 
-                        <Spinner /> : 
+                        <Spinner/> : 
+                        <>
                         <DefaultButton title={'Transferir'} clickFnc={handleTransfer}/>
+                        <div className='actions'>
+                            <DefaultButton title={'Receber IRRF'} clickFnc={handleCreditIR}/>
+                            <DefaultButton title={'Pagar IRRF'} clickFnc={handleDebitIR}/>
+                            <DefaultButton title={'Inicio'} clickFnc={handleCreditStart}/>
+                        </div>
+                        </>
                     }
-                    <div className='actions'>
-                        <DefaultButton title={'Receber IRRF'} clickFnc={handleCreditIR}/>
-                        <DefaultButton title={'Pagar IRRF'} clickFnc={handleDebitIR}/>
-                        <DefaultButton title={'Inicio'} clickFnc={handleCreditStart}/>
-                    </div>
                 </div>
             }
             <div className='history'>

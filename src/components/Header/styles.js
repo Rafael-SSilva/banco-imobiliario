@@ -7,6 +7,7 @@ const Container = styled.div`
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin-top: 2rem;
 
     & svg {
         font-size: 32px;
