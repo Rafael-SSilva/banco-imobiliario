@@ -139,14 +139,15 @@ function BankScreen() {
                         />
                     {loading ? 
                         <Spinner/> : 
-                        <>
                         <DefaultButton title={'Transferir'} clickFnc={handleTransfer}/>
-                        <div className='actions'>
-                            <DefaultButton title={'Receber IRRF'} clickFnc={handleCreditIR}/>
-                            <DefaultButton title={'Pagar IRRF'} clickFnc={handleDebitIR}/>
-                            <DefaultButton title={'Inicio'} clickFnc={handleCreditStart}/>
-                        </div>
-                        </>
+                    }
+                    {
+                    !loading && 
+                    <div className='actions'>
+                        <DefaultButton title={'Receber IRRF'} clickFnc={handleCreditIR}/>
+                        <DefaultButton title={'Pagar IRRF'} clickFnc={handleDebitIR}/>
+                        <DefaultButton title={'Inicio'} clickFnc={handleCreditStart}/>
+                    </div>
                     }
                 </div>
             }
