@@ -22,7 +22,7 @@ const Container = styled.div`
         background: #D1D0D0;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: space-around;
         box-shadow: 2px 6px 16px 6px rgba(0,0,0,1);
         -webkit-box-shadow: 2px 6px 16px 6px rgba(0,0,0,1);
         -moz-box-shadow: 2px 6px 16px 6px rgba(0,0,0,1);

@@ -4,7 +4,6 @@ import Container, {TitleContainer} from './styles'
 
 import { useNavigate } from 'react-router-dom';
 import Logo from '../../components/Logo';
-import Header from '../../components/Header';
 
 function MainPage() {
 
@@ -21,7 +20,6 @@ function MainPage() {
 
     return (
         <Container>
-            <Header/>
             <Logo setClick={ () => navigate('/')}/>
             <TitleContainer>
                 <h1>Bem Vindo</h1>

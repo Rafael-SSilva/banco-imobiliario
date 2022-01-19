@@ -1,25 +1,29 @@
-import React, { createRef, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DefaultButton from '../../components/Button'
 import Container from './styles'
 import database from '../../firebase-config';
-import {ref, onValue, remove, child, get} from 'firebase/database';
+import {ref, onValue} from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/modal';
-import CloseBtn from './exitButton';
 
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import Header from '../../components/Header';
+import exitRoom from '../../utils/exitRoom';
+import { faUser, faDollarSign } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function PlayersScreen() {
-    const [roomData, setRoomData] = useState({});
     const [users, setUsers] = useState([]);
     const [myData, setMyData] = useState(0);
     const roomId = localStorage.getItem('roomId');
     const playerId = localStorage.getItem('userKey');
     const navigate = useNavigate();
     const [openModal, setOpenModal] = useState(false);
-    const idRef = createRef();
     
     useEffect(() => {
+        if(!roomId || !playerId){
+            navigate('/')
+        }
         const roomRef = roomId ? ref(database, `salas/${roomId}`): null;
         if(roomRef){
             onValue(roomRef, (snapshot) => {
@@ -27,7 +31,6 @@ function PlayersScreen() {
                 const playersList = [];
 
                 if(newData && newData.players){
-                    setRoomData(newData)
                     Object.keys(newData.players).forEach((key) => {
                         if(newData.players[key].id.trim() !== playerId.trim()){
                             
@@ -43,7 +46,7 @@ function PlayersScreen() {
                 }
                 });
         }
-    }, [roomId, playerId])
+    }, [roomId, playerId, navigate])
 
     function handleTransfering(e){   
         navigate('/transactions', {state: {userTo: {id:e.target.id, name:e.target.name}}})
@@ -55,31 +58,27 @@ function PlayersScreen() {
 
     function handleExitRoom(){
         const dbRef = ref(database)
-        get(child(dbRef,`salas/${roomId}/players/${myData.id}`)).then(() => {
-            remove(child(dbRef,`salas/${roomId}/players/${myData.id}`)).then( () => {
-                localStorage.removeItem('userKey')
-                localStorage.removeItem('roomId')
-                navigate('/')
-            })
-        }).catch( () => {
-            localStorage.removeItem('userKey')
-            localStorage.removeItem('roomId')
-            navigate('/')
-        })
+        exitRoom(dbRef, roomId, playerId, () => navigate('/'), () => navigate('/'))
     }
 
     return (
         <Container>
-            <div className='btn-close' onClick={() => setOpenModal(true)}><CloseBtn /></div>
-            <div className='room-id'>
-                <div>ID:<span ref={idRef}>{roomData && roomData.id}</span></div>
+            <div className='room'>
                 <CopyToClipboard text={roomId}>
-                    <button>Copiar</button>
+                    <button>Copiar ID da sala</button>
                 </CopyToClipboard>
             </div>
-            <div className='room'>
-                <p>Jogador: <span>{myData ? myData.name : ''}</span></p>
-                <p>R$:<span style={{color: 'green'}}>{myData && myData.balance ? myData.balance : 0}</span></p>
+            <div className='user'>
+                <div className='wrapper'>
+                    <div className='name'>
+                        <FontAwesomeIcon icon={faUser}/>
+                        <p>{myData ? myData.name : ''}</p>
+                    </div>
+                    <div className='balance'>
+                        <FontAwesomeIcon icon={faDollarSign}/>
+                        <p>{myData && myData.balance ? myData.balance : 0}</p>
+                    </div>
+                </div>
             </div>
             <div className='players'>
                 <DefaultButton title={'Banco'} clickFnc={() => navigate('/bank')} />
@@ -100,6 +99,10 @@ function PlayersScreen() {
                             />)
                 }
             </div>
+            <Header 
+                handleGoHome={()=>navigate('/')}
+                handleExitRoom={()=> setOpenModal(true)}
+                />
         </Container>
     )
                 

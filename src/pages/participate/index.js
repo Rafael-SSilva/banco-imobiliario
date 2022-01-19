@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import DefaultButton from '../../components/Button';
 import DefaultInput from '../../components/Input';
@@ -7,6 +7,7 @@ import Container from './styles'
 import database from '../../firebase-config';
 import {ref, set, get, child, push} from 'firebase/database';
 import Spinner from '../../components/spinner';
+import Header from '../../components/Header';
 
 function Participate() {
 
@@ -14,6 +15,15 @@ function Participate() {
     const [roomId, setRoomId] = useState();
     const [userName, setUserName] = useState();
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const userKey = localStorage.getItem('userKey');
+        const roomId = localStorage.getItem('roomId');
+        
+        if(userKey && roomId){
+            navigate('/players')
+        }
+    }, [navigate])
 
     function handleRoomId(e){
         setRoomId(e.target.value)
@@ -61,6 +71,7 @@ function Participate() {
                 <DefaultInput placeholder={'Seu nome'} onChange={handleUserName} value={userName}/> 
                 <DefaultButton title={'Entrar'} clickFnc={handleJoinRoom} />
             </div>
+            <Header handleGoHome={()=>navigate('/')}/>
         </Container>
     )
 }

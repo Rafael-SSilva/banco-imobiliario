@@ -7,6 +7,9 @@ import { useLocation, useNavigate} from 'react-router-dom';
 import { child, get, onValue, push, ref, set, update } from 'firebase/database';
 import database from '../../firebase-config';
 import Spinner from '../../components/spinner';
+import Header from '../../components/Header';
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function TransferingScreen() {
 
@@ -20,7 +23,7 @@ function TransferingScreen() {
     const [myData, setMyData] = useState({});
     const [history,setHistory] = useState([])
     const [loading, setLoading] = useState(true);
-
+    
     useEffect(() => {
         if(state.userTo && playerId && roomId){
             const roomRef = ref(database, `salas/${roomId}/players/${playerId}`);
@@ -99,7 +102,8 @@ function TransferingScreen() {
             {
                 userTo && myData &&
                 <div className='inputs'>
-                    <p style={{fontWeight:'600'}}>Meu saldo: <span style={{color: 'green'}}>R${myData.balance}</span></p>
+                    <div className='balance'><FontAwesomeIcon icon={faDollarSign}/><span style={{color: 'green', fontWeight:600}}>{myData.balance}</span></div>
+                    {/* <p style={{fontWeight:'600'}}>Meu saldo: <span style={{color: 'green'}}>R${myData.balance}</span></p> */}
                     <DefaultInput placeholder={`Para: ${userTo.name}`} disabled={true}/>
                     <DefaultInput 
                         placeholder='Valor' 
@@ -114,9 +118,8 @@ function TransferingScreen() {
                     }
                 </div>
             }
-            {
-                <History transactions={history}/>
-            }
+            <History transactions={history}/>
+            <Header handleListPlayers={()=> navigate('/players')}/>
         </Container>
     )
 }
