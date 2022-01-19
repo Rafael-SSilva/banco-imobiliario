@@ -10,10 +10,14 @@ const Container = styled.div`
     justify-content: space-between;
 
     & .inputs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         
         & .balance {
             display: flex;
             align-items: flex-end;
+            align-self: flex-start;
 
             & span {
                 padding-left: .2rem;
