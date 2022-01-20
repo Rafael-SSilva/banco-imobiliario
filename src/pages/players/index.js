@@ -11,6 +11,8 @@ import Header from '../../components/Header';
 import exitRoom from '../../utils/exitRoom';
 import { faUser, faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function PlayersScreen() {
     const [users, setUsers] = useState([]);
@@ -48,6 +50,18 @@ function PlayersScreen() {
         }
     }, [roomId, playerId, navigate])
 
+    function notify(){
+        toast.success('ID copiado', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            });
+    }
+
     function handleTransfering(e){   
         navigate('/transactions', {state: {userTo: {id:e.target.id, name:e.target.name}}})
     }
@@ -65,8 +79,19 @@ function PlayersScreen() {
         <Container>
             <div className='room'>
                 <CopyToClipboard text={roomId}>
-                    <button>Copiar ID da sala</button>
+                    <button onClick={notify}>Copiar ID da sala</button>
                 </CopyToClipboard>
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    />
             </div>
             <div className='user'>
                 <div className='wrapper'>
