@@ -6,18 +6,22 @@ const Container = styled.div`
     height: 100vh;
     top: 0;
     left: 0;
-
+    background: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: .9;
+    
     & .modal {
         text-align: center;
         position: relative;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%);
+
         border: 1px solid black;
         border-radius: 8px;
-        height: 150px;
+        /* height: 100%;
+        max-height: 30vh; */
         width: 80%;
-        max-width: 400px;
+        max-width: 500px;
         font-size: 1.4rem;
         background: #D1D0D0;
         display: flex;
@@ -34,6 +38,7 @@ const Container = styled.div`
         & .buttons {
             display: flex;
             justify-content: space-around;
+            margin: 0;
 
             & button {
                 font-size: 16px;
@@ -59,6 +64,15 @@ const Container = styled.div`
                     color: var(--main-purple);
                 }
             }
+        }
+
+        & .spinner {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            margin: 1rem;
         }
     }
 `

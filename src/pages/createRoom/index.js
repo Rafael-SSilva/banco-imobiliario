@@ -53,8 +53,8 @@ function CreateRoom() {
             set(roomRef, newRoom).then( () => {
                 localStorage.setItem('roomId', roomId);
                 const newUser = push(child(roomRef,`/players`));
-                
-                set(newUser, {name, balance, id: newUser.key}).then(() => {
+
+                set(newUser, {name, balance, id: newUser.key, requesting: false, aprovals: 0, aproved: false}).then(() => {
                     localStorage.setItem('userKey', newUser.key)
                     setLoading(false);
                     navigate('/players')
@@ -76,9 +76,11 @@ function CreateRoom() {
             {loading && <Spinner /> }
             <div className='wrapper'>
                 {openModal &&
-                    <Modal text={'Deseja sair?'} 
+                    <Modal 
+                        text={'Deseja sair?'} 
                         confirmText='Sim' confirmFnc={handleExitRoom}
-                        cancelText='Não' cancelFnc={()=> setOpenModal(false)}/>
+                        cancelText='Não' cancelFnc={()=> setOpenModal(false)}
+                    />
                 }
                 <DefaultInput placeholder={'Seu nome'} onChange={handleName} value={name}/>
                 <DefaultInput placeholder={'Valor inicial'} onChange={handleBalance} value={balance} type='number'/> 
