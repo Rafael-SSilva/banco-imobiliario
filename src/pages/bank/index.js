@@ -4,12 +4,13 @@ import DefaultInput from '../../components/Input';
 import History from '../../components/history';
 import Container from './styles'
 import { useLocation, useNavigate} from 'react-router-dom';
-import { child, get, onValue, push, ref, set, update } from 'firebase/database';
+import { child, get, off, onValue, push, ref, set, update } from 'firebase/database';
 import database from '../../firebase-config';
 import Spinner from '../../components/spinner';
 import Header from '../../components/Header';
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Modal from '../../components/modal';
 
 function BankScreen() {
 
@@ -22,35 +23,89 @@ function BankScreen() {
     const [myData, setMyData] = useState({});
     const [history,setHistory] = useState([])
     const [loading, setLoading] = useState(true);
+    const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
-        if(playerId && roomId){
-            const roomRef = ref(database, `salas/${roomId}/players/${playerId}`);
-            if(roomRef){
-                onValue(roomRef, snap => {
-                    if(snap.exists()){
-                        const receivedData = snap.val();
-                        setMyData(receivedData)
+
+        function handleAction(debit=true, value, historyText){
+            setLoading(true);
+            get(child(ref(database),`salas/${roomId}/players/${playerId}`)).then(userFromSnap => {
+                const updates = {}
+                const fromObj = userFromSnap.val()
+                const valTrans = debit && fromObj.balance < 2000 ? fromObj.balance : 2000
+    
+                updates[`/players/${fromObj.id}`] = {...fromObj, balance: debit ?  fromObj.balance - valTrans: fromObj.balance + valTrans}
+                update(ref(database, `salas/${roomId}`), updates).then( () => {
+                    const newHistoryFrom = push(child(ref(database),`salas/${roomId}/players/${fromObj.id}/history`));
+    
+                    set(newHistoryFrom, {received: !debit, value, text: historyText}).then(() => {
                         setLoading(false);
-                        if(receivedData && receivedData.history){
-                            let hist = []
-                            Object.keys(receivedData.history).forEach((key) => {
-                                hist.push({
-                                    key,
-                                    text:  receivedData.history[key].text,
-                                    received: receivedData.history[key].received
-                                });
-                            });
-                            setHistory(hist)
-                        }
-                    }
+                    }).catch( () => {
+                        setLoading(false);
+                    })
+                    
                 })
-            }
+            }).catch( () => setLoading(false))
+        }
+
+        if(playerId && roomId){
+            onValue(ref(database, `salas/${roomId}/players/${playerId}`), snap => {
+                if(snap.exists()){
+                    const receivedData = snap.val();
+                    setOpenModal(receivedData.requesting)
+                    setMyData(receivedData)
+                    setLoading(false);
+
+                    if(openModal){
+                        get(ref(database, `salas/${roomId}/players`)).then( (playersSnap) =>{
+                            
+                            const playersObj = playersSnap.val()
+                            const playersLength = Object.keys(playersObj).length;
+                            const updates = {}
+
+                            if(receivedData.requesting && playersLength > 1 && receivedData.aprovals === (playersLength -1) ){
+                                updates[`/players/${receivedData.id}`] = {...receivedData, requesting: false, aprovals: 0}
+                                update(ref(database, `salas/${roomId}`), updates).then (() =>{
+                                    setMyData(m => ({...m,requesting:false}))
+                                    setOpenModal(false)
+                                    handleAction(
+                                                receivedData.debit, 
+                                                2000, 
+                                                `${receivedData.debit?'Pagou':'Recebeu'} 2000 ${receivedData.debit?' ao banco':'do banco'}`
+                                                )
+                                }).catch(()=>{
+                                    setOpenModal(false)
+                                })
+                            }else if(!receivedData.requesting){
+                                setOpenModal(false)
+                            }
+                        }).catch(()=>{
+                            setOpenModal(false);
+                        })
+                    }
+
+                    if(receivedData && receivedData.history){
+                        let hist = []
+                        Object.keys(receivedData.history).forEach((key) => {
+                            hist.push({
+                                key,
+                                text:  receivedData.history[key].text,
+                                received: receivedData.history[key].received
+                            });
+                        });
+                        setHistory(hist)
+                    }
+                }
+            })
         }
         else {
             navigate('/players')
         }
-    }, [navigate, playerId, roomId, state])
+
+        return () => {
+            off(ref(database, `salas/${roomId}/players/${playerId}`))
+        }
+    }, [navigate, playerId, roomId, state, openModal])
     
 
     function handleChange(e){
@@ -90,42 +145,29 @@ function BankScreen() {
         }
     }
 
-    function handleAction(debit=true){
-        setLoading(true);
-        get(child(dbRef,`salas/${roomId}/players/${myData.id}`)).then(userFromSnap => {
-            const updates = {}
-            const fromObj = userFromSnap.val()
-            const valTrans = debit && fromObj.balance < 2000 ? fromObj.balance : 2000
-
-            updates[`/players/${fromObj.id}`] = {...fromObj, balance: debit ?  fromObj.balance - valTrans: fromObj.balance + valTrans}
-            update(ref(database, `salas/${roomId}`), updates).then( () => {
-                const newHistoryFrom = push(child(dbRef,`salas/${roomId}/players/${fromObj.id}/history`));
-                const historyText = debit ? `Pagou ${valTrans} ao banco` : `Recebeu ${valTrans} do banco`
-
-                set(newHistoryFrom, {received: !debit, value: valTrans, text: historyText}).then(() => {
-                    setLoading(false);
-                }).catch( () => {
-                    setLoading(false);
-                })
-                
-            })
-        }).catch( () => setLoading(false))
+    function openRequestModal(text='Solicitação', debit=true){
+        const updates = {}
+        updates[`/players/${myData.id}`] = {...myData, requesting: true, request_text: text, debit}
+        update(ref(database, `salas/${roomId}`), updates).then (() =>{
+            setOpenModal(true)
+        })
     }
 
     function handleCreditIR(){
-        handleAction(false)
+        openRequestModal('Receber IRRF', false)
     }
 
     function handleDebitIR(){
-        handleAction(true)
+        openRequestModal('Pagar IRRF', true)
     }
 
     function handleCreditStart(){
-        handleAction(false)
+        openRequestModal('Receber inicio', false)
     }
 
     return (
         <Container>
+            {openModal && <Modal text={'Aguardando aprovações'} waiting={true} />}
             {myData &&
                 <div className='inputs'>
                     <div className='balance'><FontAwesomeIcon icon={faDollarSign}/><span style={{color: 'green', fontWeight:600}}>{myData.balance}</span></div>
