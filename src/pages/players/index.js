@@ -1,8 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DefaultButton from '../../components/Button'
 import Container from './styles'
 import database from '../../firebase-config';
-import {ref, onValue, update, off} from 'firebase/database';
+import {ref, onValue, update, off, get, child} from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/modal';
 
@@ -16,28 +16,49 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function PlayersScreen() {
     const [users, setUsers] = useState([]);
-    const [myData, setMyData] = useState(0);
+    const [myData, setMyData] = useState({});
     const roomId = localStorage.getItem('roomId');
     const playerId = localStorage.getItem('userKey');
     const navigate = useNavigate();
     const [openModal, setOpenModal] = useState(false);
     const [aproved, setAproved] = useState(false);
+    const [requesters, setRequesters] = useState([]);
+    const [aprovals, setAprovals] = useState([]);
     
     useEffect(() => {
+        setRequesters([])
+
         if(!roomId || !playerId){
             navigate('/')
         }
 
+        get(child(ref(database),`salas/${roomId}/players/${playerId}`)).then( (snap) => {
+            if(!snap.exists()){
+                navigate('/') 
+            }
+        }).catch( () => navigate('/'))
+
+
         onValue(ref(database, `salas/${roomId}/players`), (snapshot) => {
             const newData = snapshot.val();
             const playersList = [];
+            const reqList = []
             
-            setAproved(false)
+            setRequesters([])
+
             if(newData){
                 Object.keys(newData).forEach((key) => {
                     if(newData[key].id.trim() !== playerId.trim()){
                         
                         playersList.push(newData[key]);
+                        if(newData[key].requesting){
+                            reqList.push(newData[key])
+
+                            if (newData[key].aprovals === playersList.length){
+                                setAprovals(prev => prev.filter(pl => pl.id !== newData[key].id))
+                                setAproved(false)
+                            }
+                        }
                     }
                     else {
                         setMyData(newData[key])
@@ -46,6 +67,13 @@ function PlayersScreen() {
                 if(playersList){
                     setUsers(playersList)
                 }
+
+                if(reqList.length){
+                    setRequesters(reqList)                    
+                }
+                else {
+                    setAproved(false)
+                }
             }
             });
 
@@ -53,7 +81,7 @@ function PlayersScreen() {
             off(ref(database, `salas/${roomId}/players`))
         }
 
-    }, [roomId, playerId, navigate])
+    }, [roomId, playerId, navigate, setAprovals])
 
     function notify(){
         toast.success('ID copiado', {
@@ -68,6 +96,7 @@ function PlayersScreen() {
     }
 
     function handleTransfering(e){   
+        console.log(requesters)
         navigate('/transactions', {state: {userTo: {id:e.target.id, name:e.target.name}}})
     }
 
@@ -92,13 +121,27 @@ function PlayersScreen() {
         const updates = {}
         updates[`/players/${user.id}`] = {...user, aprovals: user.aprovals + 1}
         update(ref(database, `salas/${roomId}`), updates).then (() =>{
-            console.log('Aprovado')
             setAproved(true)
+            setAprovals(m => [...aprovals, user.id])
+            
         })
     }
 
     return (
         <Container>
+            {requesters && requesters.length > 0 && aproved && aprovals.length > 0 &&
+            <Modal text='Aguardando jogadores' waiting={true}/>}
+            {requesters && requesters.length > 0 && !aproved &&
+                requesters.map (
+                    user => 
+                    aprovals.filter(x => x !== user.id).length === 0 &&
+                    <Modal 
+                        key={user.id}
+                        text={`${user.name} - ${user?.request_text || ''}`}
+                        confirmText='Aprovar' confirmFnc={()=> handleAprove(user)}
+                        cancelText='Rejeitar' cancelFnc={()=> handleDeny(user)}
+                        />
+                )}
             <div className='room'>
                 <CopyToClipboard text={roomId}>
                     <button onClick={notify}>Copiar ID da sala</button>
@@ -136,27 +179,14 @@ function PlayersScreen() {
                 }
                 {users && users.length > 0 &&
                     users.map( user => 
-                        < Fragment key={user.id}>
-                        {user.requesting && !aproved?
-                        <Modal 
-                            key={user.id}
-                            text={`${user.name} - ${user?.request_text || ''}`}
-                            confirmText='Aprovar' confirmFnc={()=> handleAprove(user)}
-                            cancelText='Rejeitar' cancelFnc={()=> handleDeny(user)}
-                        />:
-                        user.requesting && aproved ?
-                            <Modal text='Aguardando jogadores' waiting={true}/>   
-                        :
-                        <DefaultButton 
+                            <DefaultButton 
                             title={user.name} 
                             btnStyle='white' 
                             key={user.id} 
                             clickFnc={handleTransfering}
                             id={user.id}
                             name={user.name}
-                            />}
-                        </ Fragment>
-                        )
+                            /> )
                 }
             </div>
             <Header 
@@ -168,4 +198,4 @@ function PlayersScreen() {
                 
 }
 
-export default PlayersScreen
+export default PlayersScreen;

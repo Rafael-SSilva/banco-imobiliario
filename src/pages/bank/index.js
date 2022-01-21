@@ -123,6 +123,7 @@ function BankScreen() {
                 const updates = {}
                 const fromObj = userFromSnap.val()
                 const newTransf = transfer < 0 ? 0 : transfer;
+
                 if(fromObj.balance >= newTransf && newTransf > 0){
 
                     updates[`/players/${fromObj.id}`] = {...fromObj, balance: fromObj.balance - newTransf}
@@ -146,11 +147,27 @@ function BankScreen() {
     }
 
     function openRequestModal(text='Solicitação', debit=true){
-        const updates = {}
-        updates[`/players/${myData.id}`] = {...myData, requesting: true, request_text: text, debit}
-        update(ref(database, `salas/${roomId}`), updates).then (() =>{
-            setOpenModal(true)
-        })
+        
+        get(child(ref(database),`salas/${roomId}/players`)).then( (snap) => {
+            if(snap.exists()){
+                let requestList = []
+                let usersSnap = snap.val()
+                Object.keys(usersSnap).forEach((key) => {
+                    if(usersSnap[key].id.trim() !== playerId.trim() && usersSnap[key].requesting){
+                        requestList.push(usersSnap[key]);
+                    }
+                });
+                
+                if(!openModal && !requestList.length){
+                    const updates = {}
+                    updates[`/players/${myData.id}`] = {...myData, requesting: true, request_text: text, debit}
+                    update(ref(database, `salas/${roomId}`), updates).then (() =>{
+                        setOpenModal(true)
+                    })
+                }
+            }
+        }).catch( () => {})
+
     }
 
     function handleCreditIR(){
@@ -188,7 +205,7 @@ function BankScreen() {
                     <div className='actions'>
                         <DefaultButton title={'Receber IRRF'} clickFnc={handleCreditIR}/>
                         <DefaultButton title={'Pagar IRRF'} clickFnc={handleDebitIR}/>
-                        <DefaultButton title={'Inicio'} clickFnc={handleCreditStart}/>
+                        <DefaultButton title={'Receber inicio'} clickFnc={handleCreditStart}/>
                     </div>
                     }
                 </div>
