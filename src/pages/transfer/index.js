@@ -4,7 +4,7 @@ import History from '../../components/history';
 import DefaultInput from '../../components/Input';
 import Container from './styles'
 import { useLocation, useNavigate} from 'react-router-dom';
-import { child, get, onValue, push, ref, set, update } from 'firebase/database';
+import { child, get, off, onValue, push, ref, set, update } from 'firebase/database';
 import database from '../../firebase-config';
 import Spinner from '../../components/spinner';
 import Header from '../../components/Header';
@@ -52,6 +52,10 @@ function TransferingScreen() {
         else {
             navigate('/players')
         }
+
+        return () => {
+            off(ref(database, `salas/${roomId}/players/${playerId}`))
+        }
     }, [navigate, playerId, roomId, state])
     
 
@@ -95,8 +99,8 @@ function TransferingScreen() {
                     } else {
                         setLoading(false);
                     }
-                }).catch( error => console.log(error))
-            }).catch( error => console.log(error))
+                }).catch( error => console.log(''))
+            }).catch( error => console.log(''))
         }
     }
 
