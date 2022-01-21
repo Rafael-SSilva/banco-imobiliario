@@ -55,7 +55,7 @@ function PlayersScreen() {
                             reqList.push(newData[key])
 
                             if (newData[key].aprovals === playersList.length){
-                                setAprovals(prev => prev.filter(pl => pl.id !== newData[key].id))
+                                setAprovals(prev => prev.filter(pl => pl !== newData[key].id))
                                 setAproved(false)
                             }
                         }
