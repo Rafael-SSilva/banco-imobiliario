@@ -47,7 +47,7 @@ function Participate() {
     
                         localStorage.setItem('roomId', roomId)
             
-                        set(newUser, {name:userName, balance, id: newUser.key, requesting: false, aprovals: 0, aproved: false}).then(() => {
+                        set(newUser, {name:userName, balance, id: newUser.key, requesting: false, aprovals: 0, aproved: false, requestvalue: 0}).then(() => {
                             localStorage.setItem('userKey', newUser.key)
                             setLoading(false);
                             navigate('/players')
