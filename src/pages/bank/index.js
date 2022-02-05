@@ -64,14 +64,14 @@ function BankScreen() {
                             const updates = {}
 
                             if(receivedData.requesting && playersLength > 1 && receivedData.aprovals === (playersLength -1) ){
-                                updates[`/players/${receivedData.id}`] = {...receivedData, requesting: false, aprovals: 0}
+                                updates[`/players/${receivedData.id}`] = {...receivedData, requesting: false, aprovals: 0, requestvalue: 0}
                                 update(ref(database, `salas/${roomId}`), updates).then (() =>{
                                     setMyData(m => ({...m,requesting:false}))
                                     setOpenModal(false)
                                     handleAction(
                                                 receivedData.debit, 
-                                                2000, 
-                                                `${receivedData.debit?'Pagou':'Recebeu'} 2000 ${receivedData.debit?' ao banco':'do banco'}`
+                                                transfer, 
+                                                `${receivedData.debit?'Pagou':'Recebeu'} ${transfer} ${receivedData.debit?' ao banco':'do banco'}`
                                                 )
                                 }).catch(()=>{
                                     setOpenModal(false)
@@ -105,7 +105,7 @@ function BankScreen() {
         return () => {
             off(ref(database, `salas/${roomId}/players/${playerId}`))
         }
-    }, [navigate, playerId, roomId, state, openModal])
+    }, [navigate, playerId, roomId, state, openModal, transfer])
     
 
     function handleChange(e){
@@ -146,7 +146,7 @@ function BankScreen() {
         }
     }
 
-    function openRequestModal(text='Solicitação', debit=true){
+    function openRequestModal(text='Solicitação', debit=true, value=0){
         
         get(child(ref(database),`salas/${roomId}/players`)).then( (snap) => {
             if(snap.exists()){
@@ -160,7 +160,7 @@ function BankScreen() {
                 
                 if(!openModal && !requestList.length){
                     const updates = {}
-                    updates[`/players/${myData.id}`] = {...myData, requesting: true, request_text: text, debit}
+                    updates[`/players/${myData.id}`] = {...myData, requesting: true, request_text: text, debit, value }
                     update(ref(database, `salas/${roomId}`), updates).then (() =>{
                         setOpenModal(true)
                     })
@@ -171,15 +171,19 @@ function BankScreen() {
     }
 
     function handleCreditIR(){
-        openRequestModal('Receber IRRF', false)
+        openRequestModal('Receber IRRF', false, 2000)
     }
 
     function handleDebitIR(){
-        openRequestModal('Pagar IRRF', true)
+        openRequestModal('Pagar IRRF', true, 2000)
     }
 
     function handleCreditStart(){
-        openRequestModal('Receber inicio', false)
+        openRequestModal('Receber inicio', false, 2000)
+    }
+
+    function handleReceive(){
+        openRequestModal(`Receber ${transfer}`, false, transfer)
     }
 
     return (
@@ -198,7 +202,10 @@ function BankScreen() {
                         />
                     {loading ? 
                         <Spinner/> : 
+                        <>
                         <DefaultButton title={'Transferir'} clickFnc={handleTransfer}/>
+                        <DefaultButton title={'Receber'} clickFnc={handleReceive}/>
+                        </>
                     }
                     {
                     !loading && 

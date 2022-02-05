@@ -54,7 +54,7 @@ function CreateRoom() {
                 localStorage.setItem('roomId', roomId);
                 const newUser = push(child(roomRef,`/players`));
 
-                set(newUser, {name, balance, id: newUser.key, requesting: false, aprovals: 0, aproved: false}).then(() => {
+                set(newUser, {name, balance, id: newUser.key, requesting: false, aprovals: 0, aproved: false, requestvalue: 0}).then(() => {
                     localStorage.setItem('userKey', newUser.key)
                     setLoading(false);
                     navigate('/players')
